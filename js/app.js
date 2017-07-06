@@ -14,7 +14,14 @@ var Enemy = function(y) {
 Enemy.prototype.update = function(dt) {
     // 你应该给每一次的移动都乘以 dt 参数，以此来保证游戏在所有的电脑上
     // 都是以同样的速度运行的
-    this.x += this.speed*dt;
+        this.x += this.speed*dt;
+
+    // 删除超出画面的虫子
+        for (var i = 0; i < allEnemies.length; i++) {
+           if (allEnemies[i].x>606) {
+            allEnemies.splice(i,1)
+           } 
+        }
 };
 
 // 此为游戏必须的函数，用来在屏幕上画出敌人，
@@ -27,7 +34,7 @@ Enemy.prototype.render = function() {
 var Player = function(){
     this.sprite = 'images/char-boy.png';
     this.x = 200;
-    this.y = 420;
+    this.y = 410;
 };
 
 Player.prototype.render = function() {
@@ -35,31 +42,34 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function(){
-    if (this.y>=420) {
-        this.y=420;
-    }else if(this.y<-10){
-        this.y=-10;
-        var timer = setTimeout(function(){
-            alert('winner')
-        },1000)
-    }
+  for (var i = 0; i < allEnemies.length; i++) {
+     if (allEnemies[i].y==this.y&&allEnemies[i].x==this.x) {
+        this.x=200;
+        this.y=410;
+     } 
+  }
 }
 Player.prototype.handleInput=function(allowedKeys){
    switch(allowedKeys){
     case 'left':
-    this.x-=45;
+    if (this.x>10) {
+        this.x-=100; 
+    }
     break;
     case 'up':
-    this.y-=45;
-  
+    if (this.y>10) {
+        this.y-=84;
+    }
     break;
     case 'right':
-    this.x+=45;
-  
+    if (this.x<400) {
+       this.x+=100; 
+    }
     break;
     case 'down':
-    this.y+=45;
-  
+    if (this.y<410) {
+        this.y+=84;
+    }
     break;
    }
     
@@ -69,11 +79,17 @@ Player.prototype.handleInput=function(allowedKeys){
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
 // 把玩家对象放进一个叫 player 的变量里面
+
 var allEnemies=[];
-for (var i = 0; i < 3; i++) {
-    var enemy = new Enemy(85*i+70);
+var addEnemy = function(){
+    for (var i = 0; i < 3; i++) {
+    var enemy = new Enemy(Math.floor(Math.random()*3)*80+70);
     allEnemies.push(enemy);
+    } 
 }
+addEnemy()
+setInterval('addEnemy()',3000)
+
 var player = new Player();
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
 // 方法里面。你不需要再更改这段代码了。
