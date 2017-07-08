@@ -4,7 +4,7 @@ var Enemy = function(y) {
     // 我们已经提供了一个来帮助你实现更多
     this.x = -50;
     this.y = y;
-    this.speed = Math.random()*50+50;
+    this.speed = Math.random()*30+50;
     // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
     this.sprite = 'images/enemy-bug.png';
 };
@@ -42,12 +42,21 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function(){
-  for (var i = 0; i < allEnemies.length; i++) {
-     if (allEnemies[i].y==this.y&&allEnemies[i].x==this.x) {
-        this.x=200;
-        this.y=410;
-     } 
-  }
+    //碰撞检测
+    for (var i = 0; i < allEnemies.length; i++) {
+    var l = Math.pow(allEnemies[i].x-this.x,2)+Math.pow(allEnemies[i].y-this.y,2);
+    if (l<5000) {
+       this.x=200;
+       this.y=410;
+    }
+    }
+    //过马路之后的效果
+    if (this.y<15) {
+        ctx.font = 'bold 60px arial';
+        ctx.fillStyle = 'gold';
+        ctx.fillText("WINNER",130,50);
+
+    }
 }
 Player.prototype.handleInput=function(allowedKeys){
    switch(allowedKeys){
@@ -85,10 +94,11 @@ var addEnemy = function(){
     for (var i = 0; i < 3; i++) {
     var enemy = new Enemy(Math.floor(Math.random()*3)*80+70);
     allEnemies.push(enemy);
-    } 
+    }
 }
+
 addEnemy()
-setInterval('addEnemy()',3000)
+setInterval('addEnemy()',4000)
 
 var player = new Player();
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
